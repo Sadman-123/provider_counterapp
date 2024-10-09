@@ -13,7 +13,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Set up Java 17 (required by the Android Gradle plugin)
+      # Set up Java 17
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
@@ -23,7 +23,7 @@ jobs:
       - name: Install Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.24.3'  # Use Flutter version 3.13.0 or later for Dart 3.5.3 compatibility
+          flutter-version: '3.13.0'  # Ensure this is compatible with Dart 3.5.3
 
       - name: Install dependencies
         run: flutter pub get
@@ -37,9 +37,35 @@ jobs:
           name: flutter-counter-release
           path: build/app/outputs/flutter-apk/app-release.apk
 
+      # Get the latest tag and increment the version
+      - name: Get latest tag
+        id: get_tag
+        run: |
+          git fetch --tags
+          latest_tag=$(git describe --tags $(git rev-list --tags --max-count=1))
+          echo "Latest tag: $latest_tag"
+          if [ -z "$latest_tag" ]; then
+            new_tag="1.0.0"
+          else
+            # Increment the minor version (e.g., 1.0 -> 1.1)
+            IFS='.' read -r major minor patch <<< "${latest_tag//v/}"
+            minor=$((minor + 1))
+            new_tag="${major}.${minor}.0"
+          fi
+          echo "New tag: $new_tag"
+          echo "::set-output name=new_tag::$new_tag"
+
+      # Create the new tag
+      - name: Create new Git tag
+        run: |
+          git tag ${{ steps.get_tag.outputs.new_tag }}
+          git push origin ${{ steps.get_tag.outputs.new_tag }}
+
+      # Create a GitHub release using the new tag
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
+          tag_name: ${{ steps.get_tag.outputs.new_tag }}
           files: build/app/outputs/flutter-apk/app-release.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
