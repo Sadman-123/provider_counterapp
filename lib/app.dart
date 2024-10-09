@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:untitled/provider/count_provider.dart';
 class App extends StatelessWidget {
   const App({super.key});
-
   @override
   Widget build(BuildContext context) {
     var mdw=MediaQuery.sizeOf(context).width;
@@ -14,7 +13,7 @@ class App extends StatelessWidget {
           return Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              Text("${model.count}",style: TextStyle(fontSize: mdw*0.259),),
+              InkWell(child: Text("${model.count}",style: TextStyle(fontSize: mdw*0.259),),onTap: (){model.decrem();},),
               _mybutton(mdw,mdh,onPressed: (){model.increm();})
             ],
           );
@@ -29,7 +28,7 @@ Widget _mybutton(double mdw,double mdh, {required VoidCallback onPressed})
     onTap: onPressed,
     child: Container(
       child: Center(
-        child: Text("Press Me",style: TextStyle(fontSize: mdw*0.05,color: Colors.white,fontWeight: FontWeight.w700),),
+        child: InkWell(child: Text("Press Me",style: TextStyle(fontSize: mdw*0.05,color: Colors.white,fontWeight: FontWeight.w500),),),
       ),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),

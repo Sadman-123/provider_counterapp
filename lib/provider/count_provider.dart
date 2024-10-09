@@ -7,4 +7,9 @@ class CountProvider extends ChangeNotifier{
     count++;
     notifyListeners();
   }
+  decrem()
+  {
+    count=0;
+    notifyListeners();
+  }
 }
