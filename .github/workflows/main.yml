@@ -12,13 +12,18 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+
+      # Set up Java 17
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
         with:
-           node-version: '20'
+          java-version: '17'
+          distribution: 'temurin'
 
       - name: Install Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.24.3' # Use your Flutter version
+          flutter-version: '3.10.0' # Use your Flutter version
 
       - name: Install dependencies
         run: flutter pub get
@@ -31,6 +36,7 @@ jobs:
         with:
           name: flutter-counter-release
           path: build/app/outputs/flutter-apk/app-release.apk
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
