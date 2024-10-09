@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:untitled/provider/count_provider.dart';
 class App extends StatelessWidget {
   const App({super.key});
 
@@ -8,13 +10,15 @@ class App extends StatelessWidget {
     var mdh=MediaQuery.sizeOf(context).height;
     return Scaffold(
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            Text("0",style: TextStyle(fontSize: mdw*0.25),),
-            _mybutton(mdw,mdh,onPressed: (){})
-          ],
-        ),
+        child: Consumer<CountProvider>(builder: (context, model, child) {
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Text("${model.count}",style: TextStyle(fontSize: mdw*0.259),),
+              _mybutton(mdw,mdh,onPressed: (){model.increm();})
+            ],
+          );
+        },)
       ),
     );
   }
